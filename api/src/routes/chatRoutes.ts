@@ -26,7 +26,8 @@ router.post(
     check("memberIds").isArray().withMessage("Member IDs must be an array"),
     validateRequest,
   ],
-  (req: Request, res: Response) => chatController.createGroupChat(req, res)
+  (req: Request, res: Response, next: NextFunction) =>
+    chatController.createGroupChat(req, res, next)
 );
 
 router.get("/", authMiddleware, (req: Request, res: Response) =>

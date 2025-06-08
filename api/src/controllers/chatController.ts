@@ -17,14 +17,18 @@ export class ChatController {
     }
   }
 
-  async createGroupChat(req: Request, res: Response) {
-    const { name, memberIds } = req.body;
-    const chat = await this.chatService.createGroupChat(
-      req.user!.id,
-      name,
-      memberIds
-    );
-    res.status(201).json({ status: "success", data: chat });
+  async createGroupChat(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { name, memberIds } = req.body;
+      const chat = await this.chatService.createGroupChat(
+        req.user!.id,
+        name,
+        memberIds
+      );
+      res.status(201).json({ status: "success", data: chat });
+    } catch (error) {
+      next(error);
+    }
   }
 
   async getUserChats(req: Request, res: Response) {

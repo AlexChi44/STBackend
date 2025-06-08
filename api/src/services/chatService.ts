@@ -1,13 +1,20 @@
+import { In, Repository } from "typeorm";
 import { AppDataSource } from "../config/database";
 import { Chat } from "../models/Chat";
 import { ChatMember } from "../models/ChatMember";
 import { AppError } from "../types";
+import { User } from "../models/User";
 
 export class ChatService {
+  private chatRepository: Repository<Chat> = AppDataSource.getRepository(Chat);
+  private chatMemberRepository: Repository<ChatMember> =
+    AppDataSource.getRepository(ChatMember);
+  private userRepository: Repository<User> = AppDataSource.getRepository(User);
+
   async createPrivateChat(userId: number, otherUserId: number) {
     const chatRepository = AppDataSource.getRepository(Chat);
     const chatMemberRepository = AppDataSource.getRepository(ChatMember);
-    console.log(userId, otherUserId, "user other user");
+
     const existingChat = await chatRepository
       .createQueryBuilder("chat")
       .innerJoin("chat_members", "cm1", "cm1.chat_id = chat.id")
@@ -47,27 +54,48 @@ export class ChatService {
   }
 
   async createGroupChat(userId: number, name: string, memberIds: number[]) {
-    const chatRepository = AppDataSource.getRepository(Chat);
-    const chatMemberRepository = AppDataSource.getRepository(ChatMember);
+    console.log(userId, memberIds, "userId, memberIds"); // Debug log
 
-    const chat = chatRepository.create({
+    // Remove userId from memberIds and ensure unique IDs
+    const uniqueMemberIds = [
+      ...new Set(memberIds.filter((id) => id !== userId)),
+    ];
+    if (uniqueMemberIds.length !== memberIds.length) {
+      throw new AppError("Duplicate or invalid member IDs provided", 400);
+    }
+
+    // Check if all users exist
+    const users = await this.userRepository.findBy({
+      id: In([userId, ...uniqueMemberIds]),
+    });
+    if (users.length !== uniqueMemberIds.length + 1) {
+      throw new AppError("One or more users not found", 404);
+    }
+
+    // Create chat
+    const chat = this.chatRepository.create({
       chat_type: "group",
       name,
       created_by: { id: userId },
     });
-    await chatRepository.save(chat);
+    await this.chatRepository.save(chat);
 
-    const members = memberIds.map((id) =>
-      chatMemberRepository.create({ chat_id: chat.id, user_id: id })
+    // Create members (creator as admin, others as members)
+    const members = uniqueMemberIds.map((id) =>
+      this.chatMemberRepository.create({
+        chat_id: chat.id,
+        user_id: id,
+        role: "member",
+      })
     );
     members.push(
-      chatMemberRepository.create({
+      this.chatMemberRepository.create({
         chat_id: chat.id,
         user_id: userId,
         role: "admin",
       })
     );
-    await chatMemberRepository.save(members);
+    await this.chatMemberRepository.save(members);
 
     return chat;
   }
