@@ -1,0 +1,311 @@
+[
+  {
+    "info": {
+      "name": "STBackend Basic Tests",
+      "_postman_id": "a9b8c7d6-e5f4-4a3b-b2c1-d0e1f2a3b4c5",
+      "description": "Basic test collection for STBackend API with various test scenarios",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Auth",
+        "item": [
+          {
+            "name": "Register User - Success",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function () {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "pm.test('Response contains success status and token', function () {",
+                    "    var jsonData = pm.response.json();",
+                    "    pm.expect(jsonData.status).to.equal('success');",
+                    "    pm.expect(jsonData.data.token).to.be.a('string');",
+                    "    pm.expect(jsonData.data.user).to.have.property('id');",
+                    "    pm.environment.set('user_token', jsonData.data.token);",
+                    "    pm.environment.set('user_id', jsonData.data.user.id);",
+                    "});",
+                    "pm.test('Response time is under 500ms', function () {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(500);",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"username\": \"Test User\", \"login\": \"test@example.com\", \"password\": \"secure123\"}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/register",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "register"]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Register User - Duplicate Email",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 400 for duplicate email', function () {",
+                    "    pm.response.to.have.status(400);",
+                    "});",
+                    "pm.test('Response contains error message', function () {",
+                    "    var jsonData = pm.response.json();",
+                    "    pm.expect(jsonData.status).to.equal('error');",
+                    "    pm.expect(jsonData.message).to.be.a('string');",
+                    "    pm.expect(jsonData.message.toLowerCase()).to.include('already exists');",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"username\": \"Test User 2\", \"login\": \"test@example.com\", \"password\": \"secure123\"}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/register",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "register"]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Login User - Success",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function () {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "pm.test('Response contains token', function () {",
+                    "    var jsonData = pm.response.json();",
+                    "    pm.expect(jsonData.status).to.equal('success');",
+                    "    pm.expect(jsonData.data.token).to.be.a('string');",
+                    "    pm.environment.set('user_token', jsonData.data.token);",
+                    "});",
+                    "pm.test('Response has valid JSON schema', function () {",
+                    "    var schema = {",
+                    "        type: 'object',",
+                    "        properties: {",
+                    "            status: { type: 'string' },",
+                    "            data: {",
+                    "                type: 'object',",
+                    "                properties: {",
+                    "                    token: { type: 'string' }",
+                    "                },",
+                    "                required: ['token']",
+                    "            }",
+                    "        },",
+                    "        required: ['status', 'data']",
+                    "    };",
+                    "    var jsonData = pm.response.json();",
+                    "    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"login\": \"test@example.com\", \"password\": \"secure123\"}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/login",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "login"]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Login User - Wrong Password",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 401 for wrong password', function () {",
+                    "    pm.response.to.have.status(401);",
+                    "});",
+                    "pm.test('Response contains error message', function () {",
+                    "    var jsonData = pm.response.json();",
+                    "    pm.expect(jsonData.status).to.equal('error');",
+                    "    pm.expect(jsonData.message).to.include('Invalid credentials');",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"login\": \"test@example.com\", \"password\": \"wrongpass\"}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/login",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "login"]
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "Chats",
+        "item": [
+          {
+            "name": "Get Chats - Authenticated",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function () {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "pm.test('Response is an array', function () {",
+                    "    var jsonData = pm.response.json();",
+                    "    pm.expect(jsonData.status).to.equal('success');",
+                    "    pm.expect(jsonData.data).to.be.an('array');",
+                    "});",
+                    "pm.test('Each chat has required properties', function () {",
+                    "    var jsonData = pm.response.json();",
+                    "    jsonData.data.forEach(chat => {",
+                    "        pm.expect(chat).to.have.property('id');",
+                    "        pm.expect(chat).to.have.property('chat_type');",
+                    "        pm.expect(['private', 'group']).to.include(chat.chat_type);",
+                    "    });",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "auth": {
+                "type": "bearer",
+                "bearer": [
+                  {
+                    "key": "token",
+                    "value": "{{user_token}}",
+                    "type": "string"
+                  }
+                ]
+              },
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/chats",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "chats"]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Get Chats - Unauthorized",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 401 for missing token', function () {",
+                    "    pm.response.to.have.status(401);",
+                    "});",
+                    "pm.test('Response contains error message', function () {",
+                    "    var jsonData = pm.response.json();",
+                    "    pm.expect(jsonData.status).to.equal('error');",
+                    "    pm.expect(jsonData.message).to.include('Unauthorized');",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/chats",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "chats"]
+              }
+            },
+            "response": []
+          }
+        ]
+      }
+    ],
+    "event": [
+      {
+        "listen": "prerequest",
+        "script": {
+          "type": "text/javascript",
+          "exec": []
+        }
+      },
+      {
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": []
+        }
+      }
+    ],
+    "variable": [
+      {
+        "key": "baseUrl",
+        "value": "http://localhost:5555",
+        "type": "string"
+      }
+    ]
+  }
+]

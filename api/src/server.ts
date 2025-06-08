@@ -6,7 +6,6 @@ import logger from "./config/logger";
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
-
 AppDataSource.initialize()
   .then(() => {
     app.listen(PORT, () => {

@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { check } from "express-validator";
 import { AuthController } from "../controllers/authController";
 import { validateRequest } from "../middleware/validateRequest";
@@ -16,7 +16,8 @@ router.post(
       .withMessage("Password must be at least 6 characters"),
     validateRequest,
   ],
-  (req: Request, res: Response) => authController.register(req, res)
+  (req: Request, res: Response, next: NextFunction) =>
+    authController.register(req, res, next)
 );
 
 router.post(
