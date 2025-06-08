@@ -7,7 +7,7 @@ export class ChatService {
   async createPrivateChat(userId: number, otherUserId: number) {
     const chatRepository = AppDataSource.getRepository(Chat);
     const chatMemberRepository = AppDataSource.getRepository(ChatMember);
-
+    console.log(userId, otherUserId, "user other user");
     const existingChat = await chatRepository
       .createQueryBuilder("chat")
       .innerJoin("chat_members", "cm1", "cm1.chat_id = chat.id")

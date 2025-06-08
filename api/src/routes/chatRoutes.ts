@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { check } from "express-validator";
 import { ChatController } from "../controllers/chatController";
 import { authMiddleware } from "../middleware/authMiddleware";
@@ -14,7 +14,8 @@ router.post(
     check("otherUserId").isInt().withMessage("Valid user ID is required"),
     validateRequest,
   ],
-  (req: Request, res: Response) => chatController.createPrivateChat(req, res)
+  (req: Request, res: Response, next: NextFunction) =>
+    chatController.createPrivateChat(req, res, next)
 );
 
 router.post(

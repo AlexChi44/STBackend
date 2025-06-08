@@ -7,8 +7,17 @@ export class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
     try {
       const { username, login, password } = req.body;
-      const token = await this.authService.register(username, login, password);
-      res.status(201).json({ status: "success", data: { token } });
+      const { token, id } = await this.authService.register(
+        username,
+        login,
+        password
+      );
+      res
+        .status(201)
+        .json({
+          status: "success",
+          data: { token, user: { id, username, login } },
+        });
     } catch (error) {
       next(error);
     }

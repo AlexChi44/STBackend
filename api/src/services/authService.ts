@@ -19,7 +19,8 @@ export class AuthService {
       password: hashedPassword,
     });
     await userRepository.save(user);
-    return this.generateToken(user.id);
+    console.log(user, "user");
+    return { token: this.generateToken(user.id), id: user.id };
   }
 
   async login(login: string, password: string) {

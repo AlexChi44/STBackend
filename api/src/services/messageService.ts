@@ -5,7 +5,7 @@ import { MessageStatus } from "../models/MessageStatus";
 import { AppError } from "../types";
 
 export class MessageService {
-  async sendMessage(userId: number, chatId: number, content: string) {
+  async sendMessage(chatId: number, userId: number, content: string) {
     const chatMemberRepository = AppDataSource.getRepository(ChatMember);
     const messageRepository = AppDataSource.getRepository(Message);
     const messageStatusRepository = AppDataSource.getRepository(MessageStatus);
@@ -13,6 +13,7 @@ export class MessageService {
     const isMember = await chatMemberRepository.findOne({
       where: { chat_id: chatId, user_id: userId },
     });
+
     if (!isMember) {
       throw new AppError("User is not a member of this chat", 403);
     }
