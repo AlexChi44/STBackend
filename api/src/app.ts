@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
@@ -8,6 +8,7 @@ import chatRoutes from "./routes/chatRoutes";
 import messageRoutes from "./routes/messageRoutes";
 import relationshipRoutes from "./routes/relationshipRoutes";
 import logger from "./config/logger";
+import { AppError } from "./types";
 
 const app = express();
 
@@ -30,8 +31,19 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
+// app.use(
+//   "/api/messages",
+//   (req: Request, res: Response, next: NextFunction) => {
+//     console.log(`Entering /api/messages: ${req.method} ${req.originalUrl}`);
+//     next();
+//   },
+//   messageRoutes
+// );
 app.use("/api/relationships", relationshipRoutes);
 
+app.use((req: Request, res: Response, next: NextFunction) => {
+  next(new AppError(`Route ${req.originalUrl} not found`, 404));
+});
 app.use(errorMiddleware);
 
 export default app;

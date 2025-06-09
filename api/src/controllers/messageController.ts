@@ -7,6 +7,7 @@ export class MessageController {
   async sendMessage(req: Request, res: Response, next: NextFunction) {
     try {
       const { chatId, content } = req.body;
+      console.log(" !!!!!!!!!!!!!!!!");
       const message = await this.messageService.sendMessage(
         chatId,
         req.user!.id,
@@ -18,12 +19,16 @@ export class MessageController {
     }
   }
 
-  async getChatMessages(req: Request, res: Response) {
-    const { chatId } = req.params;
-    const messages = await this.messageService.getChatMessages(
-      parseInt(chatId),
-      req.user!.id
-    );
-    res.json({ status: "success", data: messages });
+  async getChatMessages(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { chatId } = req.params;
+      const messages = await this.messageService.getChatMessages(
+        req.user!.id,
+        parseInt(chatId)
+      );
+      res.json({ status: "success", data: messages });
+    } catch (error) {
+      next(error);
+    }
   }
 }

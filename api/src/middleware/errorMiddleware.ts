@@ -18,11 +18,12 @@ export const errorMiddleware = (
     });
   } else {
     logger.error(
-      `${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+      `500 - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
     );
     res.status(500).json({
       status: "error",
       message: "Internal server error",
     });
   }
+  next(); // Ensure next() is called to prevent hanging
 };

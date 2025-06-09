@@ -19,8 +19,11 @@ router.post(
     messageController.sendMessage(req, res, next)
 );
 
-router.get("/:chatId", authMiddleware, (req: Request, res: Response) =>
-  messageController.getChatMessages(req, res)
+router.get(
+  "/:chatId",
+  authMiddleware,
+  (req: Request, res: Response, next: NextFunction) =>
+    messageController.getChatMessages(req, res, next)
 );
 
 export default router;
