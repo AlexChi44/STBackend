@@ -7,9 +7,18 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  // Check Authorization header first
+  let token = req.headers.authorization?.startsWith("Bearer ")
+    ? req.headers.authorization.split(" ")[1]
+    : null;
+
+  // Fallback to cookie
+  if (!token && req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
+
   if (!token) {
-    throw new AppError("No token provided", 401);
+    throw new AppError("Authorization token missing", 401);
   }
 
   try {
@@ -18,7 +27,7 @@ export const authMiddleware = (
     };
     req.user = { id: decoded.userId };
     next();
-  } catch (error) {
-    throw new AppError("Invalid token", 401);
+  } catch (err) {
+    throw new AppError("Invalid or expired token", 401);
   }
 };

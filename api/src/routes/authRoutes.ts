@@ -27,7 +27,8 @@ router.post(
     check("password").notEmpty().withMessage("Password is required"),
     validateRequest,
   ],
-  (req: Request, res: Response) => authController.login(req, res)
+  (req: Request, res: Response, next: NextFunction) =>
+    authController.login(req, res, next)
 );
 
 export default router;

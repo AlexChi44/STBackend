@@ -6,6 +6,12 @@ import { Message } from "../models/Message";
 import { UserRelationship } from "../models/UserRelationship";
 import { MessageStatus } from "../models/MessageStatus";
 
+console.log(
+  process.env.MYSQL_HOST,
+  process.env.MYSQL_PORT,
+  process.env.MYSQL_USER,
+  process.env.TEST
+);
 export const AppDataSource = new DataSource({
   type: "mysql",
   host: process.env.MYSQL_HOST,

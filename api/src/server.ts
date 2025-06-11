@@ -2,8 +2,10 @@ import dotenv from "dotenv";
 import { AppDataSource } from "./config/database";
 import app from "./app";
 import logger from "./config/logger";
+// import "dotenv/config";
+// require("dotenv").config({ path: "/.env" });
 
-dotenv.config();
+// dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 AppDataSource.initialize()

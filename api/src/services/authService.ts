@@ -19,7 +19,6 @@ export class AuthService {
       password: hashedPassword,
     });
     await userRepository.save(user);
-    console.log(user, "user");
     return { token: this.generateToken(user.id), id: user.id };
   }
 

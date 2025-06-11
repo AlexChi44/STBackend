@@ -9,13 +9,19 @@ import messageRoutes from "./routes/messageRoutes";
 import relationshipRoutes from "./routes/relationshipRoutes";
 import logger from "./config/logger";
 import { AppError } from "./types";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    credentials: true, // Allow cookies
+  })
+);
 app.use(express.json());
-
+app.use(cookieParser());
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
