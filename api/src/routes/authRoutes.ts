@@ -10,7 +10,7 @@ router.post(
   "/register",
   [
     check("username").notEmpty().withMessage("Username is required"),
-    check("login").isEmail().withMessage("Valid email is required"),
+    check("email").isEmail().withMessage("Valid email is required"),
     check("password")
       .isLength({ min: 6 })
       .withMessage("Password must be at least 6 characters"),
@@ -23,7 +23,7 @@ router.post(
 router.post(
   "/login",
   [
-    check("login").isEmail().withMessage("Valid email is required"),
+    check("email").isEmail().withMessage("Valid email is required"),
     check("password").notEmpty().withMessage("Password is required"),
     validateRequest,
   ],

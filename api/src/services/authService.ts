@@ -5,9 +5,9 @@ import { User } from "../models/User";
 import { AppError } from "../types";
 
 export class AuthService {
-  async register(username: string, login: string, password: string) {
+  async register(username: string, email: string, password: string) {
     const userRepository = AppDataSource.getRepository(User);
-    const existingUser = await userRepository.findOne({ where: { login } });
+    const existingUser = await userRepository.findOne({ where: { email } });
     if (existingUser) {
       throw new AppError("User already exists", 400);
     }
@@ -15,16 +15,16 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = userRepository.create({
       username,
-      login,
+      email,
       password: hashedPassword,
     });
     await userRepository.save(user);
     return { token: this.generateToken(user.id), id: user.id };
   }
 
-  async login(login: string, password: string) {
+  async login(email: string, password: string) {
     const userRepository = AppDataSource.getRepository(User);
-    const user = await userRepository.findOne({ where: { login } });
+    const user = await userRepository.findOne({ where: { email } });
     if (!user) {
       throw new AppError("Invalid credentials", 401);
     }
@@ -34,7 +34,11 @@ export class AuthService {
       throw new AppError("Invalid credentials", 401);
     }
 
-    return this.generateToken(user.id);
+    return {
+      token: this.generateToken(user.id),
+      id: user.id,
+      username: user.username,
+    };
   }
 
   private generateToken(userId: number) {

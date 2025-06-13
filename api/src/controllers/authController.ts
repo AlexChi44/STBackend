@@ -6,16 +6,13 @@ export class AuthController {
 
   async register(req: Request, res: Response, next: NextFunction) {
     try {
-      const { username, login, password } = req.body;
-      console.log(`Registering user: ${login}`); // Debug
+      const { username, email, password } = req.body;
       const { token, id } = await this.authService.register(
         username,
-        login,
+        email,
         password
       );
-      console.log(`Token generated: ${token}`); // Debug
 
-      // Set token in httpOnly cookie
       res.cookie("jwt", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -23,11 +20,10 @@ export class AuthController {
         maxAge: 3600 * 1000,
         path: "/",
       });
-      console.log("Cookie set: jwt"); // Debug
 
       res.status(201).json({
         status: "success",
-        data: { user: { id, username, login } },
+        data: { user: { id, username, email } },
       });
     } catch (error) {
       console.log(`Registration error: ${error}`); // Debug
@@ -37,10 +33,11 @@ export class AuthController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { login, password } = req.body;
-      console.log(`Logging in user: ${login}`); // Debug
-      const token = await this.authService.login(login, password);
-      console.log(`Token generated: ${token}`); // Debug
+      const { email, password } = req.body;
+      const { username, token, id } = await this.authService.login(
+        email,
+        password
+      );
 
       res.cookie("jwt", token, {
         httpOnly: true,
@@ -49,11 +46,10 @@ export class AuthController {
         maxAge: 3600 * 1000,
         path: "/",
       });
-      console.log("Cookie set: jwt"); // Debug
 
       res.json({
         status: "success",
-        data: { user: { login } },
+        data: { user: { id, username, email } },
       });
     } catch (error) {
       console.log(`Login error: ${error}`); // Debug
