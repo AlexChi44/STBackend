@@ -43,6 +43,43 @@ export class MessageService {
     return message;
   }
 
+  async deleteMessage(chatId: number, userId: number, id: number) {
+    const chatMemberRepository = AppDataSource.getRepository(ChatMember);
+    const messageRepository = AppDataSource.getRepository(Message);
+    const messageStatusRepository = AppDataSource.getRepository(MessageStatus);
+
+    const isMember = await chatMemberRepository.findOne({
+      where: { chat_id: chatId, user_id: userId },
+    });
+
+    if (!isMember) {
+      throw new AppError("User is not a member of this chat", 403);
+    }
+
+    const message = messageRepository.create({
+      chat_id: chatId,
+      sender_id: userId,
+    });
+    await messageRepository.save(message);
+
+    const chatMembers = await chatMemberRepository.find({
+      where: { chat_id: chatId },
+    });
+
+    const messageStatuses = chatMembers
+      .filter((member) => member.user_id !== userId)
+      .map((member) =>
+        messageStatusRepository.create({
+          message_id: message.id,
+          user_id: member.user_id,
+          status: "sent",
+        })
+      );
+    await messageStatusRepository.save(messageStatuses);
+
+    return message;
+  }
+
   async getChatMessages(userId: number, chatId: number) {
     const chatMemberRepository = AppDataSource.getRepository(ChatMember);
     const messageRepository = AppDataSource.getRepository(Message);

@@ -18,6 +18,17 @@ router.post(
   (req: Request, res: Response, next: NextFunction) =>
     messageController.sendMessage(req, res, next)
 );
+router.delete(
+  "/",
+  authMiddleware,
+  [
+    check("chatId").isInt().withMessage("Valid chat ID is required"),
+    check("id").notEmpty().withMessage("Chat id is required"),
+    validateRequest,
+  ],
+  (req: Request, res: Response, next: NextFunction) =>
+    messageController.deleteMessage(req, res, next)
+);
 
 router.get(
   "/:chatId",

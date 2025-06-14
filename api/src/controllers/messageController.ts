@@ -7,11 +7,26 @@ export class MessageController {
   async sendMessage(req: Request, res: Response, next: NextFunction) {
     try {
       const { chatId, content } = req.body;
-      console.log(" !!!!!!!!!!!!!!!!");
+
       const message = await this.messageService.sendMessage(
         chatId,
         req.user!.id,
         content
+      );
+      res.status(201).json({ status: "success", data: message });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteMessage(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { chatId, id } = req.body;
+
+      const message = await this.messageService.sendMessage(
+        chatId,
+        req.user!.id,
+        id
       );
       res.status(201).json({ status: "success", data: message });
     } catch (error) {
