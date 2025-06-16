@@ -23,12 +23,12 @@ export class MessageController {
     try {
       const { chatId, id } = req.body;
 
-      const message = await this.messageService.sendMessage(
-        chatId,
+      const result = await this.messageService.deleteMessage(
+        parseInt(chatId),
         req.user!.id,
-        id
+        parseInt(id)
       );
-      res.status(201).json({ status: "success", data: message });
+      res.status(200).json({ status: "success", data: result });
     } catch (error) {
       next(error);
     }

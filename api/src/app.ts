@@ -39,14 +39,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
-// app.use(
-//   "/api/messages",
-//   (req: Request, res: Response, next: NextFunction) => {
-//     console.log(`Entering /api/messages: ${req.method} ${req.originalUrl}`);
-//     next();
-//   },
-//   messageRoutes
-// );
 app.use("/api/relationships", relationshipRoutes);
 
 app.use((req: Request, res: Response, next: NextFunction) => {

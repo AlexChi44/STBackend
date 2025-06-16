@@ -27,10 +27,10 @@ export class MessageStatus {
 
   @Column({
     type: "enum",
-    enum: ["sent", "delivered", "read"],
+    enum: ["sent", "delivered", "read", "deleted"],
     default: "sent",
   })
-  status!: "sent" | "delivered" | "read";
+  status!: "sent" | "delivered" | "read" | "deleted";
 
   @UpdateDateColumn()
   updated_at!: Date;
