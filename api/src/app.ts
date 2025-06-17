@@ -5,6 +5,7 @@ import rateLimit from "express-rate-limit";
 import { errorMiddleware } from "./middleware/errorMiddleware";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
+import usersRoutes from "./routes/usersRoutes";
 import chatRoutes from "./routes/chatRoutes";
 import messageRoutes from "./routes/messageRoutes";
 import relationshipRoutes from "./routes/relationshipRoutes";
@@ -37,6 +38,7 @@ app.use((req, res, next) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/users", usersRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/relationships", relationshipRoutes);
