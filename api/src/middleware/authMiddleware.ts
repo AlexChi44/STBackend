@@ -12,6 +12,9 @@ export const authMiddleware = (
     ? req.headers.authorization.split(" ")[1]
     : null;
 
+  if(!token && req.headers.authorization?.startsWith("jwt=")){
+    token = req.headers.authorization.split("jwt=")[1]
+  }
   // Fallback to cookie
   if (!token && req.cookies.jwt) {
     token = req.cookies.jwt;
