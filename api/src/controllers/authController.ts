@@ -6,6 +6,9 @@ export class AuthController {
 
   async register(req: Request, res: Response, next: NextFunction) {
     try {
+      const domain = req.headers.host?.split(":")[0] || ""; // Или req.get('host')
+      console.log(`Запрос пришел с домена: ${domain}`);
+
       const { username, email, password } = req.body;
       const { token, id } = await this.authService.register(
         username,
@@ -19,6 +22,7 @@ export class AuthController {
         sameSite: "lax",
         maxAge: 3600 * 1000,
         path: "/",
+        domain,
       });
 
       res.status(201).json({
@@ -33,6 +37,8 @@ export class AuthController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
+      const domain = req.headers.host?.split(":")[0] || ""; // Или req.get('host')
+      console.log(`Запрос пришел с домена: ${domain}`);
       const { email, password } = req.body;
       const { username, token, id } = await this.authService.login(
         email,
@@ -45,6 +51,7 @@ export class AuthController {
         sameSite: "lax",
         maxAge: 3600 * 1000,
         path: "/",
+        domain,
       });
 
       res.json({
