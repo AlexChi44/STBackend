@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  JoinColumn,
 } from "typeorm";
 import { Chat } from "./Chat";
 import { User } from "./User";
@@ -14,6 +13,12 @@ import { User } from "./User";
 export class Message {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @Column()
+  chat_id!: number;
+
+  @Column()
+  sender_id!: number;
 
   @Column("text")
   content!: string;
@@ -28,11 +33,8 @@ export class Message {
   is_deleted!: boolean;
 
   @ManyToOne(() => Chat, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "chat_id" }) // явно связываем
   chat!: Chat;
 
   @ManyToOne(() => User, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "sender_id" }) // явно связываем
   sender!: User;
 }
-
