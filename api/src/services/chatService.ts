@@ -54,7 +54,7 @@ export class ChatService {
   }
 
   async createGroupChat(userId: number, name: string, memberIds: number[]) {
-    console.log(userId, memberIds, "userId, memberIds"); // Debug log
+    console.log(userId, memberIds, "userId, memberIds");
 
     // Remove userId from memberIds and ensure unique IDs
     const uniqueMemberIds = [
@@ -107,5 +107,36 @@ export class ChatService {
       .innerJoin("chat_members", "cm", "cm.chat_id = chat.id")
       .where("cm.user_id = :userId", { userId })
       .getMany();
+  }
+
+  async deleteChat(chatId: number, userId: number) {
+    const chat = await this.chatRepository.findOne({
+      where: { id: chatId },
+      relations: ["created_by"],
+    });
+
+    if (!chat) {
+      throw new AppError("Chat not found", 404);
+    }
+
+    if (chat.chat_type === "group" && chat.created_by.id !== userId) {
+      throw new AppError(
+        "You are not authorized to delete this group chat",
+        403
+      );
+    }
+
+    if (chat.chat_type === "private") {
+      const isMember = await this.chatMemberRepository.findOne({
+        where: { chat_id: chatId, user_id: userId },
+      });
+      if (!isMember) {
+        throw new AppError("You are not a member of this chat", 403);
+      }
+    }
+
+    await this.chatRepository.remove(chat);
+
+    return { message: "Chat deleted successfully" };
   }
 }

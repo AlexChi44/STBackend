@@ -34,4 +34,15 @@ router.get("/", authMiddleware, (req: Request, res: Response) =>
   chatController.getUserChats(req, res)
 );
 
+router.delete(
+  "/:id",
+  authMiddleware,
+  [
+    check("id").isInt().withMessage("Valid chat ID is required"),
+    validateRequest,
+  ],
+  (req: Request, res: Response, next: NextFunction) =>
+    chatController.deleteChat(req, res, next)
+);
+
 export default router;

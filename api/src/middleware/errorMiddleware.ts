@@ -25,5 +25,5 @@ export const errorMiddleware = (
       message: "Internal server error",
     });
   }
-  next(); // Ensure next() is called to prevent hanging
+  next();
 };

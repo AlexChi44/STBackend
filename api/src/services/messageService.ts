@@ -53,7 +53,6 @@ export class MessageService {
         const messageStatusRepository =
           transactionalEntityManager.getRepository(MessageStatus);
 
-        // Проверяем, что пользователь состоит в чате
         const chatMember = await chatMemberRepository.findOne({
           where: { chat_id: chatId, user_id: userId },
         });
@@ -61,7 +60,6 @@ export class MessageService {
           throw new AppError("User is not a member of this chat", 403);
         }
 
-        // Проверяем, что сообщение существует и принадлежит чату
         const message = await messageRepository.findOne({
           where: { id: messageId, chat_id: chatId },
         });
@@ -69,7 +67,6 @@ export class MessageService {
           throw new AppError("Message not found", 404);
         }
 
-        // Проверяем, что пользователь имеет право удалить сообщение
         if (message.sender_id !== userId && chatMember.role !== "admin") {
           throw new AppError(
             "You are not authorized to delete this message",
@@ -77,11 +74,9 @@ export class MessageService {
           );
         }
 
-        // Помечаем сообщение как удалённое
         message.is_deleted = true;
         await messageRepository.save(message);
 
-        // Обновляем статусы для всех участников чата
         const chatMembers = await chatMemberRepository.find({
           where: { chat_id: chatId },
         });
@@ -95,7 +90,6 @@ export class MessageService {
           await messageStatusRepository.save(status);
         }
 
-        // Создаём статусы для участников, у которых их ещё нет
         const newStatuses = chatMembers
           .filter(
             (member) =>
@@ -129,11 +123,11 @@ export class MessageService {
     }
 
     const messages = await messageRepository.find({
-      where: { chat_id: chatId, is_deleted: false }, // Исключаем удалённые сообщения
+      where: { chat_id: chatId, is_deleted: false },
       relations: ["sender"],
       order: { sent_at: "ASC" },
     });
-
+    console.log(messages, "messages");
     return messages;
   }
 }

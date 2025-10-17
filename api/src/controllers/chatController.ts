@@ -35,4 +35,17 @@ export class ChatController {
     const chats = await this.chatService.getUserChats(req.user!.id);
     res.json({ status: "success", data: chats });
   }
+
+  async deleteChat(req: Request, res: Response, next: NextFunction) {
+    try {
+      const chatId = parseInt(req.params.id);
+      if (isNaN(chatId)) {
+        throw new Error("Invalid chat ID");
+      }
+      const result = await this.chatService.deleteChat(chatId, req.user!.id);
+      res.status(200).json({ status: "success", data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

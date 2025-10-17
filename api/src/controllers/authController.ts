@@ -6,7 +6,7 @@ export class AuthController {
 
   async register(req: Request, res: Response, next: NextFunction) {
     try {
-      const domain = req.headers.host?.split(":")[0] || ""; // Или req.get('host')
+      const domain = req.headers.host?.split(":")[0] || "";
       console.log(`Запрос пришел с домена: ${domain}`);
 
       const { username, email, password } = req.body;
@@ -30,14 +30,14 @@ export class AuthController {
         data: { user: { id, username, email } },
       });
     } catch (error) {
-      console.log(`Registration error: ${error}`); // Debug
+      console.log(`Registration error: ${error}`);
       next(error);
     }
   }
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const domain = req.headers.host?.split(":")[0] || ""; // Или req.get('host')
+      const domain = req.headers.host?.split(":")[0] || "";
       console.log(`Запрос пришел с домена: ${domain}`);
       const { email, password } = req.body;
       const { username, token, id } = await this.authService.login(
@@ -59,7 +59,7 @@ export class AuthController {
         data: { user: { id, username, email } },
       });
     } catch (error) {
-      console.log(`Login error: ${error}`); // Debug
+      console.log(`Login error: ${error}`);
       next(error);
     }
   }
