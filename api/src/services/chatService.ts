@@ -54,8 +54,6 @@ export class ChatService {
   }
 
   async createGroupChat(userId: number, name: string, memberIds: number[]) {
-    console.log(userId, memberIds, "userId, memberIds");
-
     // Remove userId from memberIds and ensure unique IDs
     const uniqueMemberIds = [
       ...new Set(memberIds.filter((id) => id !== userId)),

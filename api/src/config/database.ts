@@ -6,12 +6,6 @@ import { Message } from "../models/Message";
 import { UserRelationship } from "../models/UserRelationship";
 import { MessageStatus } from "../models/MessageStatus";
 
-console.log(
-  process.env.MYSQL_HOST,
-  process.env.MYSQL_PORT,
-  process.env.MYSQL_USER,
-  process.env.TEST
-);
 export const AppDataSource = new DataSource({
   type: "mysql",
   host: process.env.MYSQL_HOST,
@@ -20,6 +14,7 @@ export const AppDataSource = new DataSource({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.DATABASE_NAME,
   entities: [User, Chat, ChatMember, Message, UserRelationship, MessageStatus],
-  synchronize: true,
+  synchronize: process.env.NODE_ENV !== "production",
+  logging: false,
   // logging: process.env.NODE_ENV !== "production",
 });

@@ -2,7 +2,7 @@
   "name": "social-network-api",
   "version": "1.0.0",
   "scripts": {
-    "start": "node dist/server.ts",
+    "start": "node dist/server.js",
     "build": "tsc",
     "dev": "nodemon --ext ts --legacy-watch --polling-interval 1000 src/server.ts"
   },

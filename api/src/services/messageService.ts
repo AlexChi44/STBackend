@@ -127,7 +127,6 @@ export class MessageService {
       relations: ["sender"],
       order: { sent_at: "ASC" },
     });
-    console.log(messages, "messages");
     return messages;
   }
 }

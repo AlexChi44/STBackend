@@ -7,7 +7,6 @@ export class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
     try {
       const domain = req.headers.host?.split(":")[0] || "";
-      console.log(`Запрос пришел с домена: ${domain}`);
 
       const { username, email, password } = req.body;
       const { token, id } = await this.authService.register(
@@ -30,7 +29,6 @@ export class AuthController {
         data: { user: { id, username, email } },
       });
     } catch (error) {
-      console.log(`Registration error: ${error}`);
       next(error);
     }
   }
@@ -38,7 +36,6 @@ export class AuthController {
   async login(req: Request, res: Response, next: NextFunction) {
     try {
       const domain = req.headers.host?.split(":")[0] || "";
-      console.log(`Запрос пришел с домена: ${domain}`);
       const { email, password } = req.body;
       const { username, token, id } = await this.authService.login(
         email,
@@ -59,7 +56,6 @@ export class AuthController {
         data: { user: { id, username, email } },
       });
     } catch (error) {
-      console.log(`Login error: ${error}`);
       next(error);
     }
   }
