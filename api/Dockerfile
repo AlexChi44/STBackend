@@ -2,9 +2,9 @@ FROM node:alpine AS builder
 
 WORKDIR /app
 
-COPY package* ./
+COPY package*.json ./
 
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install && npm cache clean --force
 
 COPY . ./
 

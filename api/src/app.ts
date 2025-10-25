@@ -30,7 +30,6 @@ app.use(
     max: 100,
   })
 );
-console.log("FRONTEND_URL", process.env.NODE_ENV);
 app.use((req, res, next) => {
   logger.info(`${req.method} ${req.originalUrl} - ${req.ip}`);
   next();

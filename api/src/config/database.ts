@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
   type: "mysql",
   host: process.env.MYSQL_HOST,
   port: parseInt(process.env.MYSQL_PORT || "3306"),
-  username: process.env.MYSQL_USER,
+  username: process.env.MYSQL_USER || "root",
   password: process.env.MYSQL_PASSWORD,
   database: process.env.DATABASE_NAME,
   entities: [User, Chat, ChatMember, Message, UserRelationship, MessageStatus],
