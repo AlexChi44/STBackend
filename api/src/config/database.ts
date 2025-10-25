@@ -14,7 +14,7 @@ export const AppDataSource = new DataSource({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.DATABASE_NAME,
   entities: [User, Chat, ChatMember, Message, UserRelationship, MessageStatus],
-  synchronize: process.env.NODE_ENV !== "production",
+  synchronize: true,
   logging: false,
   // logging: process.env.NODE_ENV !== "production",
 });
